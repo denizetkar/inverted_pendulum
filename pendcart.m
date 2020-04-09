@@ -13,4 +13,6 @@ dx(2,1) = (L^2*g*m^2*sin(2*x(3))/2 + (I + L^2*m)*(L*m*x(4)^2*sin(x(3)) - d*x(2) 
 dx(3,1) = x(4);
 dx(4,1) = -m*L/(I + m*L^2) * (dx(2,1)*cos(x(3)) + g*sin(x(3)));
 % integral of theta error
-dx(5,1) = x(3) - wr(3);
+if nargin == 8
+    dx(5,1) = x(3) - wr(3);
+end
