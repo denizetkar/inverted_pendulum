@@ -32,11 +32,11 @@ eig(A)
 rank(ctrb(A,B))
 
 %%  Design LQR controller
-Q = [1e-16 0 0 0;
+Q = [1 0 0 0;
     0 1 0 0;
     0 0 1 0;
     0 0 0 1];
-R = 1e-4;
+R = 1e-3;
 
 % Q = [1 0 0;
 %     0 1 0;
@@ -47,17 +47,19 @@ K = lqr(A,B,Q,R);
 
 %% Simulate closed-loop system
 tspan = 0:.001:10;
-x0 = [-1; 1; pi; 0];  % initial condition
+x0 = [-1; 0; pi-0.5; 0];  % initial condition
 wr = [1; 0; pi; 0];      % reference position
-u=@(x)-K*(reshape(x,length(wr),1) - wr);       % control law
+wrapAngle=@(x)[x(1); x(2); wrapTo2Pi(x(3)); x(4)];
+u=@(x)-K*(wrapAngle(x) - wr);       % control law
 [t,x] = ode45(@(t,x)pendcart(x,m,M,L,g,d,u(x)),tspan,x0);
 
-% x0 = [-1; 0; pi+0.7; 0; 0];  % initial condition
+% x0 = [-1; 0; pi-0.5; 0; 0];  % initial condition
 % wr = [1; 0; pi; 0; 0];      % reference position
-% u=@(x)-K*(reshape(x(3:end),length(wr(3:end)),1) - wr(3:end)); % control law
+% wrapAngle=@(x)[wrapTo2Pi(x(1)); x(2); x(3)];
+% u=@(x)-K*(wrapAngle(x(3:end)) - wr(3:end)); % control law
 % [t,x] = ode45(@(t,x)pendcart(x,m,M,L,g,d,u(x),wr),tspan,x0);
 
-for k=1:100:length(t)
+for k=1:50:length(t)
     drawpend(x(k,:),m,M,L);
 end
 
